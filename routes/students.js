@@ -8,6 +8,14 @@ var db = require('../db');
 router.get('/students/:email', passport.authenticate('basic', { session: false }),
   function(req, res, next) {
     // TODO: add api handler to check if email/password exists
+    db.getClient().collection("students").findOne({email: req.params.email}, (err, results) => {
+      if (err) {
+        res.status(404).send(err);
+      } else {
+        res.send(results);
+      }
+      
+    });
     // TODO: Response back with user data
 });
 
