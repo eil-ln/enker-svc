@@ -1,8 +1,8 @@
 db.students.remove({});
 db.students.insertMany([{
-  "email": "mesrobk@gmail.com",
-  "firstName": "Mesrob",
-  "lastName": "Kyurkchyan",
+  "email": "father@gmail.com",
+  "firstName": "Fa",
+  "lastName": "Ther",
   "password": "password",
   "learningTargets": [
     "Animation",
@@ -11,9 +11,9 @@ db.students.insertMany([{
   ],
   "location": "Yerevan"
 }, {
-  "email": "mesrobk2@gmail.com",
-  "firstName": "Martin",
-  "lastName": "Kyurkchyan",
+  "email": "batya@gmail.com",
+  "firstName": "Ba",
+  "lastName": "Tya",
   "password": "password",
   "learningTargets": [
     "Game Development",
