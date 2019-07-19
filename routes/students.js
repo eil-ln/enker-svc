@@ -11,12 +11,11 @@ router.get('/students/:email', passport.authenticate('basic', { session: false }
     // TODO: Response back with user data
     db.getClient().collection("students").findOne({email: req.params.email}, (err, results) => {
       if (err) {
-        res.status(500).send(err);
-      }
-      else if (results) {
-        res.send(results);
+        res.status(500).send({error: err.message});
+      } else if (!results) {
+        res.status(404).send({error: "Invalid email or password"});
       } else {
-        res.status(404).send("Account is not exist");
+        res.send(results);
       }
     });
     
