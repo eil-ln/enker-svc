@@ -54,15 +54,15 @@ function usersNamespace(io) {
           } else if (results.value == null) {
             socket.emit('list error', {error: "Student with email " })
           } else {
-            users.emit('disconnected', results.value);
+            users.emit('logged out', results.value);
           }
         }
       );
     })
+
     // TODO: add listener for logout message, update db, emit
     socket.on('logout', user => {
       socket.leave(user.email);
-      console.log("logged out");
 
       db.getClient().collection("students").findOneAndUpdate(
         {email: user.email},
