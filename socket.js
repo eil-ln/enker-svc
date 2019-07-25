@@ -12,15 +12,23 @@ function connect(server) {
 function usersNamespace(io) {
   const users = io.of('/users');
   users.on('connection', socket => {
-    // TODO: add listener for starting chat
+    
+    socket.on('start-chat', (toUser, fromUser) => {
+      if (toUser) {
+        users.in(toUser.email).emit('start-chat', fromUser);
+      }
+    })
     
     // TODO: add listener to chat message
+    socket.on('new-message', (data) => {
+      socket.in(data.toUser.email).emit('new-message', data.message);
+    });
 
     // TODO: add listener for editor message WYSIWIG
 
     // TODO: add listener for drawing
 
-    // TODO: add listener for logging in, update flag loggedIn in Database, join room
+    // ogging in, update flag loggedIn in Database, join room
     socket.on('login', user => {
       socket.join(user.email);
 
@@ -40,7 +48,7 @@ function usersNamespace(io) {
       );
     })
 
-    // TODO: add listener on 'disconnect' to log out user, and emit
+    // listener on 'disconnect' to log out user, and emit
     socket.on('disconnect', user => {
       socket.leave(user.email);
 
@@ -60,7 +68,7 @@ function usersNamespace(io) {
       );
     })
 
-    // TODO: add listener for logout message, update db, emit
+    // listener for logout message, update db, emit
     socket.on('logout', user => {
       socket.leave(user.email);
 
@@ -79,18 +87,21 @@ function usersNamespace(io) {
         }
       );
     })  
-    // TODO: add listener to search query
-    socket.on('search', (data, fn) => {
-      const textCriterias = {$text: {$search: data}};
-      const learningTargetsCriterias = {learningTargets: data};
-      const criteria = {$or: [textCriterias, learningTargetsCriterias]}
-      db.getClient().collection('students').find(criteria).sort().toArray((err, result) => {
-        if(!err) {
-          fn(result);
+
+    // listener to search query
+    socket.on('query', (params, fn) => {
+      const textCriteria = { $text: { $search: params.search } };
+      const learningTargetCriteria = { learningTargets: params.search };
+      const criteria = {$or: [textCriteria, learningTargetCriteria]};
+      db.getClient().collection("students").find(criteria).sort({loggedIn: -1}).toArray(function(err, results) {
+        if (err) {
+          console.log('err', err);
+          socket.emit('list error', err);
         } else {
-          fn(err);
+          console.log('results', results);
+          fn(results);
         }
-      })
+      });
     })
   });
 
